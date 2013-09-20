@@ -1,11 +1,12 @@
 var path = require('path');
 var http = require('http');
+var https = require('https');
 var fs = require('fs');
 var express = require('express');
 var WebSocketServer = require('ws').Server;
 
 // Allow disabling logging for benchmarking
-var LOGGING = true;
+var LOGGING = false;
 
 if (!LOGGING) {
   console.log = function(){};
@@ -109,8 +110,8 @@ function ipFromReq(request) {
     var ip = ipFromReq(req);
     console.log(ip + ': ' + req.method + ' ' + req.url);
     var file = path.basename(req.url);
-    if (file === '/') {
-      file = '/index.html';
+    if (file === '') {
+      file = 'index.html';
     }
     var ext = path.extname(file);
     var data;
@@ -131,15 +132,24 @@ function ipFromReq(request) {
       res.end(data);
     }
   }
-  var server = http.createServer(cachedFileServer);
-  server.listen(3002);
-  // also add a WebSocket echo server to ensure that data is getting proxied correctly.
-  var ws_server = new WebSocketServer({ server: server });
-  ws_server.on('connection', function(ws) {
-    var ip = ipFromReq(ws.upgradeReq);
-    console.log(ip + ': New WebSocket connection')
-    ws.on('message', function(message) {
-      ws.send(message);
+  function addWebSocketEcho(server) {
+    server.listen(3002);
+    // also add a WebSocket echo server to ensure that data is getting proxied correctly.
+    var ws_server = new WebSocketServer({ server: server });
+    ws_server.on('connection', function(ws) {
+      var ip = ipFromReq(ws.upgradeReq);
+      console.log(ip + ': New WebSocket connection')
+      ws.on('message', function(message) {
+        ws.send(message);
+      });
     });
-  });
+  }
+  var server = http.createServer(cachedFileServer).listen(3002);
+  addWebSocketEcho(server);
+  var options = {
+    key: fs.readFileSync(path.join(__dirname, '../keys/key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, '../keys/cert.pem'))
+  };
+  server = https.createServer(options, cachedFileServer).listen(3003);
+  addWebSocketEcho(server);
 }());
