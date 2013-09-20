@@ -1,0 +1,167 @@
+/*
+ * include/types/global.h
+ * Global variables.
+ *
+ * Copyright (C) 2000-2012 Willy Tarreau - w@1wt.eu
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, version 2.1
+ * exclusively.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+#ifndef _TYPES_GLOBAL_H
+#define _TYPES_GLOBAL_H
+
+#include <netinet/in.h>
+
+#include <common/config.h>
+#include <types/freq_ctr.h>
+#include <types/listener.h>
+#include <types/proxy.h>
+#include <types/task.h>
+
+#ifndef UNIX_MAX_PATH
+#define UNIX_MAX_PATH 108
+#endif
+
+/* modes of operation (global.mode) */
+#define	MODE_DEBUG	0x01
+#define	MODE_DAEMON	0x02
+#define	MODE_QUIET	0x04
+#define	MODE_CHECK	0x08
+#define	MODE_VERBOSE	0x10
+#define	MODE_STARTING	0x20
+#define	MODE_FOREGROUND	0x40
+#define	MODE_SYSTEMD	0x80
+
+/* list of last checks to perform, depending on config options */
+#define LSTCHK_CAP_BIND	0x00000001	/* check that we can bind to any port */
+#define LSTCHK_CTTPROXY	0x00000002	/* check that tproxy is enabled */
+#define LSTCHK_NETADM	0x00000004	/* check that we have CAP_NET_ADMIN */
+
+/* Global tuning options */
+/* available polling mechanisms */
+#define GTUNE_USE_SELECT         (1<<0)
+#define GTUNE_USE_POLL           (1<<1)
+#define GTUNE_USE_EPOLL          (1<<2)
+#define GTUNE_USE_KQUEUE         (1<<3)
+/* platform-specific options */
+#define GTUNE_USE_SPLICE         (1<<4)
+
+/* Access level for a stats socket */
+#define ACCESS_LVL_NONE     0
+#define ACCESS_LVL_USER     1
+#define ACCESS_LVL_OPER     2
+#define ACCESS_LVL_ADMIN    3
+
+/* FIXME : this will have to be redefined correctly */
+struct global {
+#ifdef USE_OPENSSL
+	char *crt_base;             /* base directory path for certificates */
+	char *ca_base;              /* base directory path for CAs and CRLs */
+#endif
+	int uid;
+	int gid;
+	int nbproc;
+	int maxconn, hardmaxconn;
+#ifdef USE_OPENSSL
+	int maxsslconn;
+	char *listen_default_ciphers;
+	char *connect_default_ciphers;
+#endif
+	struct freq_ctr conn_per_sec;
+	struct freq_ctr comp_bps_in;	/* bytes per second, before http compression */
+	struct freq_ctr comp_bps_out;	/* bytes per second, after http compression */
+	int cps_lim, cps_max;
+	int comp_rate_lim;           /* HTTP compression rate limit */
+	int maxpipes;		/* max # of pipes */
+	int maxsock;		/* max # of sockets */
+	int rlimit_nofile;	/* default ulimit-n value : 0=unset */
+	int rlimit_memmax;	/* default ulimit-d in megs value : 0=unset */
+	long maxzlibmem;        /* max RAM for zlib in bytes */
+	int mode;
+	unsigned int req_count; /* HTTP request counter for logs and unique_id */
+	int last_checks;
+	int spread_checks;
+	char *chroot;
+	char *pidfile;
+	char *node, *desc;		/* node name & description */
+	char *log_tag;                  /* name for syslog */
+	struct list logsrvs;
+	char *log_send_hostname;   /* set hostname in syslog header */
+	struct {
+		int maxpollevents; /* max number of poll events at once */
+		int maxaccept;     /* max number of consecutive accept() */
+		int options;       /* various tuning options */
+		int recv_enough;   /* how many input bytes at once are "enough" */
+		int bufsize;       /* buffer size in bytes, defaults to BUFSIZE */
+		int maxrewrite;    /* buffer max rewrite size in bytes, defaults to MAXREWRITE */
+		int client_sndbuf; /* set client sndbuf to this value if not null */
+		int client_rcvbuf; /* set client rcvbuf to this value if not null */
+		int server_sndbuf; /* set server sndbuf to this value if not null */
+		int server_rcvbuf; /* set server rcvbuf to this value if not null */
+		int chksize;       /* check buffer size in bytes, defaults to BUFSIZE */
+		int pipesize;      /* pipe size in bytes, system defaults if zero */
+		int max_http_hdr;  /* max number of HTTP headers, use MAX_HTTP_HDR if zero */
+		int cookie_len;    /* max length of cookie captures */
+#ifdef USE_OPENSSL
+		int sslcachesize;  /* SSL cache size in session, defaults to 20000 */
+		unsigned int ssllifetime;   /* SSL session lifetime in seconds */
+		unsigned int ssl_max_record; /* SSL max record size */
+#endif
+#ifdef USE_ZLIB
+		int zlibmemlevel;    /* zlib memlevel */
+		int zlibwindowsize;  /* zlib window size */
+#endif
+		int comp_maxlevel;    /* max HTTP compression level */
+	} tune;
+	struct {
+		char *prefix;           /* path prefix of unix bind socket */
+		struct {                /* UNIX socket permissions */
+			uid_t uid;      /* -1 to leave unchanged */
+			gid_t gid;      /* -1 to leave unchanged */
+			mode_t mode;    /* 0 to leave unchanged */
+		} ux;
+	} unix_bind;
+#ifdef USE_CPU_AFFINITY
+	unsigned long cpu_map[32];  /* list of CPU masks for the 32 first processes */
+#endif
+	struct proxy *stats_fe;     /* the frontend holding the stats settings */
+};
+
+extern struct global global;
+extern int  pid;                /* current process id */
+extern int  relative_pid;       /* process id starting at 1 */
+extern int  actconn;            /* # of active sessions */
+extern int  listeners;
+extern int  jobs;               /* # of active jobs */
+extern struct chunk trash;
+extern char *swap_buffer;
+extern int nb_oldpids;          /* contains the number of old pids found */
+extern const int zero;
+extern const int one;
+extern const struct linger nolinger;
+extern int stopping;	/* non zero means stopping in progress */
+extern char hostname[MAX_HOSTNAME_LEN];
+extern char localpeer[MAX_HOSTNAME_LEN];
+extern struct list global_listener_queue; /* list of the temporarily limited listeners */
+extern struct task *global_listener_queue_task;
+
+#endif /* _TYPES_GLOBAL_H */
+
+/*
+ * Local variables:
+ *  c-indent-level: 8
+ *  c-basic-offset: 8
+ * End:
+ */
