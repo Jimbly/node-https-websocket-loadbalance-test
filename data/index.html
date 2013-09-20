@@ -1,8 +1,40 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <title>Test</title>
+    <title>WebSocket Test</title>
+
+    <script>
+      function writeToScreen(message) {
+        var pre = document.createElement("p");
+        pre.style.wordWrap = "break-word";
+        pre.innerHTML = message;
+        document.getElementById("output").appendChild(pre);
+      }
+      function init() {
+        websocket = new WebSocket('ws://' + location.host);
+        websocket.onopen = function(evt) {
+          writeToScreen("CONNECTED");
+          var message = "WebSocket rocks";
+          writeToScreen("SENT: " + message);
+          websocket.send(message);
+        };
+        websocket.onclose = function(evt) {
+          writeToScreen("DISCONNECTED");
+        };
+        websocket.onmessage = function(evt) {
+          writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
+          websocket.close();
+        };
+        websocket.onerror = function(evt) {
+          writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+        };
+      }
+    </script>
   </head>
-  <body>
-    Hello, world.
+  <body onload="init()">
+    <h2>WebSocket Test</h2>  <div id="output"></div>
   </body>
 </html>
+
+
+

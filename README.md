@@ -26,4 +26,4 @@ node application server ports
 -----------------------------
 3000 dummy implementation (theoretical max speed on the node side)
 3001 simple express static file serving app
-3002 smarter (for the purpose of benchmarking) static file server with a file cache
+3002 smarter (for the purpose of benchmarking) static file server with a file cache and a WebSocket echo server
