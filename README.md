@@ -53,6 +53,10 @@ cd haproxy-ss-20130902
 make TARGET=linux26
 cd ../nodeserver
 npm install
+cd ../stud
+sudo apt-get install libev-dev
+sudo apt-get install libev4
+make
 ```
 
 Ports
@@ -74,6 +78,11 @@ apache server ports
 -------------------
 80 http, with the test data symlinked to /loadbalancedata/
 443 http, with the test data symlinked to /loadbalancedata/
+
+other
+----
+3006 stud
+
 
 
 References
