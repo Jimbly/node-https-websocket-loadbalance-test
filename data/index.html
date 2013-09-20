@@ -10,19 +10,44 @@
         pre.innerHTML = message;
         document.getElementById("output").appendChild(pre);
       }
+      function abToString(ab) {
+        if (!ab instanceof ArrayBuffer) {
+          return 'ERROR';
+        }
+        var view = new Uint8Array(ab);
+        var arr = [];
+        for (var ii = 0; ii < view.length; ++ii) {
+          arr.push(view[ii]);
+        }
+        return '(BINARY)' + String.fromCharCode.apply(String, arr);
+      }
       function init() {
-        websocket = new WebSocket('ws://' + location.host);
+        var host = (document.location.protocol + '//' + document.location.host);
+        var host = host.replace('http://', 'ws://').replace('https://', 'wss://');
+        websocket = new WebSocket(host);
         websocket.onopen = function(evt) {
           writeToScreen("CONNECTED");
           var message = "WebSocket rocks";
           writeToScreen("SENT: " + message);
           websocket.send(message);
+          websocket.binaryType = 'arraybuffer';
+          var ab = new ArrayBuffer(message.length);
+          var view = new Uint8Array(ab);
+          for (var ii = 0; ii < message.length; ++ii) {
+            view[ii] = message.charCodeAt(ii);
+          }
+          writeToScreen("SENT: " + abToString(ab));
+          websocket.send(ab);
         };
         websocket.onclose = function(evt) {
           writeToScreen("DISCONNECTED");
         };
         websocket.onmessage = function(evt) {
-          writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
+          if (evt.data instanceof ArrayBuffer) {
+            writeToScreen('<span style="color: blue;">RESPONSE: ' + abToString(evt.data) + '</span>');
+          } else {
+            writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
+          }
           websocket.close();
         };
         websocket.onerror = function(evt) {
