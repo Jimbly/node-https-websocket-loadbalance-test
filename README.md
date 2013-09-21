@@ -57,6 +57,13 @@ cd ../stud
 sudo apt-get install libev-dev
 sudo apt-get install libev4
 make
+cd ..
+tar xzf httpd-2.4.6.tar.gz
+cd httpd-2.4.6
+sudo apt-get install libaprutil1-dev
+sudo apt-get install libaprutil1
+./configure
+make
 ```
 
 Ports
