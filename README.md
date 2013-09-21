@@ -88,7 +88,10 @@ apache server ports
 
 other
 ----
-3006 stud
+3006 stud ssl -> node http port 3002
+3007 stud ssl -> haproxy port 3008
+3008 HAProxy http (would be live production port 80)
+3009 HAProxy https (would be live production port 443)
 
 
 

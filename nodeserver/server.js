@@ -89,6 +89,7 @@ function ipFromReq(request) {
   // going to get the entire file every time, which is not good!  But for the
   // the purpose of benchmarking (never from cache), this is sufficient.
   var cache = {};
+  cache['health'] = '1'; // Allow /health to return a success for HAProxy status checking
   function primeCache(file) {
     try {
       var data = cache[file] = fs.readFileSync(
