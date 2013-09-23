@@ -27,6 +27,7 @@ cd node
 git checkout railgun
 ./configure
 make
+sudo make install
 cd
 ```
 
@@ -46,8 +47,8 @@ sudo ln -s ~/loadbalance/nginx/default
 
 Apache
 ------
-Assuming Apache installed, but no existing SSL setup
 ```
+sudo apt-get install apache2
 cd ~/loadbalance
 sudo mkdir /etc/apache2/ssl
 sudo cp keys/* /etc/apache2/ssl
