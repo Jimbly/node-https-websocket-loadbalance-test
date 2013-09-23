@@ -1,11 +1,21 @@
 var HOST = '10.118.241.72'; // AWS internal
 //var HOST = '23.22.4.234'; // external
 
-var NUM_REQUESTS = 100;
-var CONCURRENCY = 2;
+var NUM_REQUESTS = 5000;
+var CONCURRENCY = 10;
+var DO_PAUSE = true;
 
 var exec = require('child_process').exec;
 var path = require('path');
+var readline = require('readline');
+
+var rl = readline.createInterface({input: process.stdin, output: process.stdout});
+
+function pause(next) {
+  rl.question("Press enter to continue. ", function(answer) {
+    next();
+  });
+}
 
 var ports = [
   [3000, 'http' , 'node_simple'],
@@ -21,19 +31,22 @@ var ports = [
   [3009, 'https', 'ssl_haproxy'],
 ];
 var files = [
-  // 'thumb.jpg',
-  'texture.raw',
-  // 'mesh.ibo',
+  'mesh.ibo',
   'index.html',
-  // 'mesh.cmesh'
+  'thumb.jpg',
+  'mesh.cmesh',
+  'texture.raw',
 ];
+
+console.log('RUNNING TEST N=' + NUM_REQUESTS + ', C=' + CONCURRENCY);
 
 var fi = 0;
 var pi = 0;
 function tryPair() {
   var start = Date.now();
+  var prog = path.join(__dirname, '../httpd-2.4.6/support/ab') + ' -qdn ' + NUM_REQUESTS + ' -c ' + CONCURRENCY;
   var url = ports[pi][1] + '://' + HOST + ':' + ports[pi][0] + '/' + (ports[pi][3] || '') + files[fi];
-  exec(path.join(__dirname, '../httpd-2.4.6/support/ab') + ' -dn ' + NUM_REQUESTS + ' -c ' + CONCURRENCY + ' ' + url,
+  exec(prog + ' ' + url,
     function (error, stdout, stderr) {
       var end = Date.now();
       if (error || stderr) {
@@ -41,16 +54,22 @@ function tryPair() {
         throw error;
       }
       var dt = (end - start) / 1000;
-      console.log(dt.toFixed(1) + 's: ' + ports[pi][2] + ' (' + url + ')');
+      console.log(('   ' + dt.toFixed(3)).slice(-7) + 's ' + ports[pi][2] + ' (' + url + ')');
+      var do_pause = false;
       ++fi;
       if (fi === files.length) {
+        do_pause = DO_PAUSE;
         fi = 0;
         ++pi;
         if (pi === ports.length) {
           return;
         }
       }
-      tryPair();
+      if (do_pause) {
+        pause(tryPair);
+      } else {
+        tryPair();
+      }
     }
   );
 }
