@@ -20,7 +20,7 @@
 server {
 	listen 3004;
 
-	root /home/jimb/loadbalance/data;
+	root /home/ubuntu/loadbalance/data;
 	index index.html;
 	location / {
 		try_files $uri $uri/ =404;
@@ -49,8 +49,8 @@ server {
 	listen 3005;
 
 	ssl on;
-	ssl_certificate /home/jimb/loadbalance/keys/cert.pem;
-	ssl_certificate_key /home/jimb/loadbalance/keys/key.pem;
+	ssl_certificate /home/ubuntu/loadbalance/keys/cert.pem;
+	ssl_certificate_key /home/ubuntu/loadbalance/keys/key.pem;
 
 	ssl_session_timeout 5m;
 
@@ -58,7 +58,7 @@ server {
 	ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
 	ssl_prefer_server_ciphers on;
 
-	root /home/jimb/loadbalance/data;
+	root /home/ubuntu/loadbalance/data;
 	index index.html;
 	location / {
 		try_files $uri $uri/ =404;

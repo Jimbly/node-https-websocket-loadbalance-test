@@ -10,9 +10,25 @@ Prerequisites
 node 0.10.x
 
 Some of the configuration files assume this repository has been cloned into
-home/jimb/loadbalance.  To use other folders, you may need to adjust some
+home/ubuntu/loadbalance.  To use other folders, you may need to adjust some
 configuration files
 
+AMI on AWS
+----------
+Used the latest Ubuntu LTS (Precise) AMI
+
+Install required packages, node, etc
+```
+sudo apt-get install git
+sudo apt-get install make
+sudo apt-get install g++
+git clone https://github.com/Jimbly/node.git
+cd node
+git checkout railgun
+./configure
+make
+cd
+```
 
 nginx
 -----
@@ -55,13 +71,11 @@ cd ../nodeserver
 npm install
 cd ../stud
 sudo apt-get install libev-dev
-sudo apt-get install libev4
 make
 cd ..
 tar xzf httpd-2.4.6.tar.gz
 cd httpd-2.4.6
 sudo apt-get install libaprutil1-dev
-sudo apt-get install libaprutil1
 ./configure
 make
 ```
