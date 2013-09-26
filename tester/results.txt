@@ -1,0 +1,104 @@
+
+stud concurrency on AWS 2-core instance
+1 process
+RUNNING TEST N=5000, C=20
+  5.277s ssl_stud (https://10.118.241.72:3006/mesh.ibo)
+  5.409s ssl_stud (https://10.118.241.72:3006/index.html)
+  6.011s ssl_stud (https://10.118.241.72:3006/thumb.jpg)
+  8.027s ssl_stud (https://10.118.241.72:3006/mesh.cmesh)
+ 77.530s ssl_stud (https://10.118.241.72:3006/texture.raw)
+stud CPU 79s
+2 processes
+RUNNING TEST N=5000, C=20
+  4.962s ssl_stud (https://10.118.241.72:3006/mesh.ibo)
+  5.327s ssl_stud (https://10.118.241.72:3006/index.html)
+  5.590s ssl_stud (https://10.118.241.72:3006/thumb.jpg)
+  7.430s ssl_stud (https://10.118.241.72:3006/mesh.cmesh)
+ 76.773s ssl_stud (https://10.118.241.72:3006/texture.raw)
+stud CPU 85s
+4 processes
+RUNNING TEST N=5000, C=20
+  5.310s ssl_stud (https://10.118.241.72:3006/mesh.ibo)
+  5.438s ssl_stud (https://10.118.241.72:3006/index.html)
+  5.421s ssl_stud (https://10.118.241.72:3006/thumb.jpg)
+  7.635s ssl_stud (https://10.118.241.72:3006/mesh.cmesh)
+ 74.813s ssl_stud (https://10.118.241.72:3006/texture.raw)
+stud CPU 84s
+
+
+full testing, N=5000, C=10
+  2.335s node_simple (http://10.118.241.72:3000/mesh.ibo)
+  2.292s node_simple (http://10.118.241.72:3000/index.html)
+  2.336s node_simple (http://10.118.241.72:3000/thumb.jpg)
+  2.199s node_simple (http://10.118.241.72:3000/mesh.cmesh)
+  2.254s node_simple (http://10.118.241.72:3000/texture.raw)
+CPU: node 11s
+  7.115s node_express (http://10.118.241.72:3001/mesh.ibo)
+  6.472s node_express (http://10.118.241.72:3001/index.html)
+  6.406s node_express (http://10.118.241.72:3001/thumb.jpg)
+  7.381s node_express (http://10.118.241.72:3001/mesh.cmesh)
+ 44.155s node_express (http://10.118.241.72:3001/texture.raw)
+CPU: node 51s
+  2.798s node_cached (http://10.118.241.72:3002/mesh.ibo)
+  2.786s node_cached (http://10.118.241.72:3002/index.html)
+  2.827s node_cached (http://10.118.241.72:3002/thumb.jpg)
+  4.858s node_cached (http://10.118.241.72:3002/mesh.cmesh)
+ 44.097s node_cached (http://10.118.241.72:3002/texture.raw)
+CPU: node 19s
+ 15.211s ssl_node_cached (https://10.118.241.72:3003/mesh.ibo)
+ 15.295s ssl_node_cached (https://10.118.241.72:3003/index.html)
+ 15.892s ssl_node_cached (https://10.118.241.72:3003/thumb.jpg)
+ 18.040s ssl_node_cached (https://10.118.241.72:3003/mesh.cmesh)
+106.594s ssl_node_cached (https://10.118.241.72:3003/texture.raw)
+CPU: node 171s
+  1.000s nginx (http://10.118.241.72:3004/mesh.ibo)
+  1.069s nginx (http://10.118.241.72:3004/index.html)
+  1.063s nginx (http://10.118.241.72:3004/thumb.jpg)
+  2.046s nginx (http://10.118.241.72:3004/mesh.cmesh)
+ 44.058s nginx (http://10.118.241.72:3004/texture.raw)
+CPU: nginx 6s
+  8.975s ssl_nginx (https://10.118.241.72:3005/mesh.ibo)
+  9.054s ssl_nginx (https://10.118.241.72:3005/index.html)
+  9.384s ssl_nginx (https://10.118.241.72:3005/thumb.jpg)
+ 12.484s ssl_nginx (https://10.118.241.72:3005/mesh.cmesh)
+ 85.904s ssl_nginx (https://10.118.241.72:3005/texture.raw)
+CPU: nginx 91s
+  1.101s apache (http://10.118.241.72:80/loadbalancedata/mesh.ibo)
+  1.118s apache (http://10.118.241.72:80/loadbalancedata/index.html)
+  1.136s apache (http://10.118.241.72:80/loadbalancedata/thumb.jpg)
+  1.986s apache (http://10.118.241.72:80/loadbalancedata/mesh.cmesh)
+ 44.048s apache (http://10.118.241.72:80/loadbalancedata/texture.raw)
+CPU: apache2 11s
+ 23.554s ssl_apache (https://10.118.241.72:443/loadbalancedata/mesh.ibo)
+ 23.498s ssl_apache (https://10.118.241.72:443/loadbalancedata/index.html)
+ 24.166s ssl_apache (https://10.118.241.72:443/loadbalancedata/thumb.jpg)
+ 25.825s ssl_apache (https://10.118.241.72:443/loadbalancedata/mesh.cmesh)
+ 95.447s ssl_apache (https://10.118.241.72:443/loadbalancedata/texture.raw)
+CPU: apache2 155s
+  5.172s ssl_stud (https://10.118.241.72:3006/mesh.ibo)
+  5.382s ssl_stud (https://10.118.241.72:3006/index.html)
+  6.359s ssl_stud (https://10.118.241.72:3006/thumb.jpg)
+  7.823s ssl_stud (https://10.118.241.72:3006/mesh.cmesh)
+ 73.897s ssl_stud (https://10.118.241.72:3006/texture.raw)
+CPU: stud 87s, node 19s
+  2.203s haproxy (http://10.118.241.72:3008/mesh.ibo)
+  2.042s haproxy (http://10.118.241.72:3008/index.html)
+  2.054s haproxy (http://10.118.241.72:3008/thumb.jpg)
+  3.061s haproxy (http://10.118.241.72:3008/mesh.cmesh)
+ 44.107s haproxy (http://10.118.241.72:3008/texture.raw)
+CPU: haproxy 17s, node 13s?! - rerun this one:
+  2.118s haproxy (http://10.118.241.72:3008/mesh.ibo)
+  1.894s haproxy (http://10.118.241.72:3008/index.html)
+  1.964s haproxy (http://10.118.241.72:3008/thumb.jpg)
+  2.792s haproxy (http://10.118.241.72:3008/mesh.cmesh)
+ 44.090s haproxy (http://10.118.241.72:3008/texture.raw)
+CPU: haprxoy 17s, node 14s?!
+  6.599s ssl_haproxy (https://10.118.241.72:3009/mesh.ibo)
+  8.050s ssl_haproxy (https://10.118.241.72:3009/index.html)
+  7.260s ssl_haproxy (https://10.118.241.72:3009/thumb.jpg)
+  9.155s ssl_haproxy (https://10.118.241.72:3009/mesh.cmesh)
+ 80.793s ssl_haproxy (https://10.118.241.72:3009/texture.raw)
+CPU: haproxy 23s, stud: 78s, node: 19s
+
+
+
