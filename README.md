@@ -3,6 +3,8 @@ node-https-websocket-loadbalance-test
 
 Repository of various configurations for testing load balancing an https+websockets node server
 
+Check out the full blog post with detailed analysis at http://blog.cloudparty.com/2013/09/30/efficient-load-balancing-and-ssl-termination-for-websockets-and-node-js/
+
 Installation
 ============
 Prerequisites
